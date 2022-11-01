@@ -1,36 +1,17 @@
 import axios from 'axios';
+import { IApiDetails, IApiResponse, IArgs } from './types';
 
-interface IApiDetails {
-   API: string;
-   Description: string;
-   Auth: string;
-   HTTPS: boolean;
-   Cors: string;
-   Link: string;
-   Category: string;
-}
-interface IApiResponse {
-   data: {
-      entries: IApiDetails[],
-      count: number,
-   }
-}
-
-interface IArgs {
-   category: string;
-   limit?: number;
-}
-
-function handleLimit(alldata: IApiDetails[]) {
+// Function to limit the data retrieved from the API
+function handleLimit(data: IApiDetails[]) {
    if (limit) {
-      if (limit > alldata.length) {
+      if (limit > data.length) {
          console.log(`Limit is greater than the number of APIs available. Showing all APIs.`);
-         alldata = alldata;
+         data = data;
       } else {
-         alldata = alldata.slice(0, limit);
+         data = data.slice(0, limit);
       }
    }
-   return alldata;
+   return data;
 
 }
 
@@ -41,6 +22,7 @@ const limit = args[1] ? parseInt(args[1]) : 10;
 
 const apiArgs: IArgs = { category, limit };
 
+// Fields to store all the data retrieved from the api response.data.entries 
 let alldata: IApiDetails[] = [];
 
 // API URL and Config for Axios
@@ -53,7 +35,18 @@ axios(config)
       const { entries } = response.data;
       alldata = entries;
       alldata = handleLimit(alldata);
+      //reverse the array so that it prints the APIs name in decreasing alphabetical order
       (alldata.reverse()).forEach((api) => {
          console.log(api.API);
       });
    })
+   .catch((error: Error) => {
+      if (axios.isAxiosError(error)) {
+         // Access to config, request, and response
+         console.log(error.config);
+      }
+      else {
+         // No results returned from the request
+         console.log("No results");
+      }
+   });
