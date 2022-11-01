@@ -4,15 +4,11 @@ import { IApiDetails, IApiResponse, IArgs } from './types';
 // Function to limit the data retrieved from the API
 function handleLimit(data: IApiDetails[]) {
    if (limit) {
-      if (limit > data.length) {
-         console.log(`Limit is greater than the number of APIs available. Showing all APIs.`);
-         data = data;
-      } else {
+      if (limit < data.length) {
          data = data.slice(0, limit);
       }
    }
    return data;
-
 }
 
 //Get the arguments from the command line and create the IArgs object
@@ -32,11 +28,18 @@ const config = {
 }
 axios(config)
    .then((response: IApiResponse) => {
+
       const { entries } = response.data;
       alldata = entries;
-      alldata = handleLimit(alldata);
+
+      return alldata;
+   })
+   .then((value) => {
+
+      const limitedData = handleLimit(value);
+
       //reverse the array so that it prints the APIs name in decreasing alphabetical order
-      (alldata.reverse()).forEach((api) => {
+      (limitedData.reverse()).forEach((api) => {
          console.log(api.API);
       });
    })
