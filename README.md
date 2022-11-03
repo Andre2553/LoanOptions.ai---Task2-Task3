@@ -38,8 +38,10 @@ Moreover, in this project, we have the SQL task, and the file located for it is 
 4. Now, you can run it using the below command.
 
     ```sh
-    $ npm start
+    $ npm start {Category} {Limit}
     ```
+    e.g. npm start Animals 5
+    
 After that, the program should run.
 
 </details>
